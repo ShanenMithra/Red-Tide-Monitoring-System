@@ -1,14 +1,31 @@
+require("dotenv").config();
+const fs = require("fs");
+console.log("Google Maps key loaded:", Boolean(process.env.GOOGLE_MAPS_API_KEY));
+
 const express = require("express");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const { spawn } = require("child_process");
+const { createProxyMiddleware } = require("http-proxy-middleware");
+
+const pythonCommand = process.platform === "win32" ? "python" : "python3";
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { index: false }));
+app.use(
+  ["/classifier", "/predict", "/bloom", "/static"],
+  createProxyMiddleware({
+    target: "http://127.0.0.1:5000",
+    changeOrigin: true,
+    pathRewrite: {
+      "^/classifier": ""
+    }
+  })
+);
 
 
 const db = new sqlite3.Database("./database.db");
@@ -42,7 +59,7 @@ app.post("/api/predict-bloom", (req, res) => {
 
   const { features, latitudes, longitudes } = req.body;
 
-  const python = spawn("python", ["gcn_model.py"]);
+  const python = spawn(pythonCommand, ["gcn_model.py"]);
 
   python.stdin.write(JSON.stringify({
     features,
@@ -109,7 +126,7 @@ app.post("/api/similarity", (req, res) => {
 
   const { features, target_index } = req.body;
 
-  const python = spawn("python", ["similarity.py"]);
+  const python = spawn(pythonCommand, ["similarity.py"]);
 
   python.stdin.write(JSON.stringify({ features, target_index }));
   python.stdin.end();
@@ -136,7 +153,16 @@ app.post("/api/similarity", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Backend is running.");
+  const indexPath = path.join(__dirname, "public", "index.html");
+
+  let html = fs.readFileSync(indexPath, "utf8");
+
+  html = html.replace(
+    "__GOOGLE_MAPS_API_KEY__",
+    process.env.GOOGLE_MAPS_API_KEY
+  );
+
+  res.send(html);
 });
 
 const PORT = process.env.PORT || 3000;

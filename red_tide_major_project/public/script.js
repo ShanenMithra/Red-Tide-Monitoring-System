@@ -23,7 +23,7 @@ const validFeatures = usgsFeatureMatrix.map(f => {
   return f;
 });
 
-fetch("http://localhost:3000/api/predict-bloom", {
+fetch("/api/predict-bloom", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
@@ -193,7 +193,7 @@ if (hasTemp) {
 
   const clickedIndex = usgsMarkers.indexOf(marker);
 
-  fetch("http://localhost:3000/api/similarity", {
+  fetch("/api/similarity", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -356,7 +356,7 @@ function enableBloomDrawing() {
     console.log("Sending report:", lat, lng, severity);
 
     // 🔵 SEND TO BACKEND
-    fetch("http://localhost:3000/api/report", {
+    fetch("/api/report", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -454,7 +454,7 @@ function enableUndoShortcuts() {
 }
 function loadApprovedReports() {
 
-  fetch("http://localhost:3000/api/reports/approved")
+  fetch("/api/reports/approved")
     .then(res => res.json())
     .then(reports => {
 

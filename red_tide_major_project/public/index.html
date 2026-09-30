@@ -4,7 +4,7 @@
   <title>Red Tide Monitoring System</title>
 
   <script async
-  src="https://maps.googleapis.com/maps/api/js?key=KEYYY&libraries=places,drawing&callback=initMap">
+  src="https://maps.googleapis.com/maps/api/js?key=__GOOGLE_MAPS_API_KEY__&libraries=places,drawing&callback=initMap">
 </script>
 
   <link rel="stylesheet" href="style.css">
@@ -32,10 +32,9 @@
 
 <button onclick="undoLast()">Undo Last</button>
 <button onclick="clearAll()">Clear All</button>
-<button onclick="window.location.href='http://127.0.0.1:5000'">
+<button onclick="window.location.href='/classifier'">
     Go To Algae Classifier
 </button>
-
 
 <div id="map"></div>
 

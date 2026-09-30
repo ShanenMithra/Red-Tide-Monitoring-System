@@ -4,15 +4,17 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-  "start": "node server.js"
-},
+    "start": "node server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
+    "dotenv": "^18.0.4",
     "express": "^5.2.1",
+    "http-proxy-middleware": "^3.0.5",
     "sqlite3": "^5.1.7"
   }
 }
