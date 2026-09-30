@@ -1,0 +1,118 @@
+body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background: url("../static/bg3.png") no-repeat center center fixed; 
+        background-size: cover;
+        margin: 0;
+        padding: 0;
+    
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(254, 252, 252, 0.1);
+}
+
+h1 {
+    color: #ffffff;
+}
+
+
+/* Centered image preview */
+#imagePreview {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+    display: none;
+    border-radius: 10px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    
+    display: block; /* Centers the image */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+
+.custom-file-upload {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #a32626b1;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    background-color: #0d552b;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#algae-prevention {
+    font-size: 16px;
+    color: white !important; /* Force white text */
+    margin-top: 10px;
+}
+#result-box, #result-box * {
+    background: rgba(0, 0, 0, 0.5); /* Black with 70% transparency */
+    color: white !important;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+
+#predicted-class {
+    font-size: 24px; /* Bigger text for classification name */
+    font-weight: bold;
+    color: #fcfbfb; /* Slightly darker text */
+    margin-bottom: 10px;
+}
+
+#description-text {
+    font-size: 18px; /* Smaller text for details */
+    color: #ffffff;
+    text-align: left; /* Align description to the left */
+}
+#mapButton {
+    position: fixed;
+    background-color: #0889b1;
+    bottom: 20px;
+    right: 20px;   /* change to left: 20px; if you want bottom-left */
+    padding: 12px 18px;
+    font-size: 14px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+#backButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 18px;
+    font-size: 20px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    background-color: #0889b1;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}

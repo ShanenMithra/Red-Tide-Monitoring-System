@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algae Classifier</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Algal Bloom Classification</h1>
+
+    <!-- Custom Upload Button -->
+<label for="imageInput" class="custom-file-upload">Upload Image</label>
+<input type="file" id="imageInput" accept="image/*" onchange="previewImage()" hidden>
+
+
+<br>
+<!-- Preview the uploaded image -->
+<img id="imagePreview" src="" alt="Uploaded Image" style="display: none; max-width: 300px; margin-top: 10px;">
+<br>
+
+<button onclick="uploadImage()">Classify</button>
+<br>
+
+<h2 id="result"></h2>
+<p id="algae-description"></p>
+<p id="algae-prevention"></p>
+<div id="result-box" style="display: none;">
+    <h2 id="result"></h2>
+    <p id="algae-description"></p>
+    <p id="algae-prevention"></p>
+</div>
+<button onclick="window.location.href='/bloom'">Predict Bloom Likelihood</button>
+<button id="mapButton" onclick="window.location.href='http://localhost:3000/'">
+    Open Red Tide Map
+</button>
+
+
+
+<script>
+   function previewImage() {
+    const input = document.getElementById('imageInput');
+    const preview = document.getElementById('imagePreview');
+
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = "block"; // Show preview immediately
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function uploadImage() {
+    const fileInput = document.getElementById("imageInput");
+    const resultText = document.getElementById("result");
+
+    if (fileInput.files.length === 0) {
+        resultText.innerHTML = "Please select an image first!";
+        return;
+    }
+
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    fetch("/predict", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            resultText.innerHTML = "Error: " + data.error;
+        } else {
+            // Prevent "undefined" from showing up
+            let description = data.description ? data.description : "No additional information available.";
+            
+            resultText.innerHTML = `
+    <div id="result-box">
+        <h2 id="predicted-class">${data.class}</h2>  
+        <p id="description-text">${data.description}</p>
+    </div>`;
+
+        }
+    })
+    .catch(error => {
+        resultText.innerHTML = "Error: " + error.message;
+    });
+}
+
+
+
+</script>

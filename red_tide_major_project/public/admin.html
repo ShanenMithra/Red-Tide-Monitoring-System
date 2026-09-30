@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #81c9f6;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+
+  #reports {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+
+  .severity {
+    font-weight: bold;
+  }
+
+  .low { color: #b59f00; }
+  .medium { color: #ff8800; }
+  .high { color: #ff0000; }
+  .very-high { color: #8b0000; }
+
+  button {
+    margin-right: 10px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .approve {
+    background: #4CAF50;
+    color: white;
+  }
+
+  .deny {
+    background: #e53935;
+    color: white;
+  }
+
+  a {
+    text-decoration: none;
+    color: #0077cc;
+  }
+
+  small {
+    color: #666;
+  }
+</style>
+  <title>Researcher Dashboard</title>
+</head>
+<body>
+  <h1>Pending Reports</h1>
+  <div id="reports"></div>
+
+  <script>
+    function loadReports() {
+      fetch("http://localhost:3000/api/reports/pending")
+        .then(res => res.json())
+        .then(data => {
+          const container = document.getElementById("reports");
+          container.innerHTML = "";
+
+          data.forEach(report => {
+            const div = document.createElement("div");
+
+            div.className = "card";
+
+const severityClass = report.severity.toLowerCase().replace(" ", "-");
+
+div.innerHTML = `
+  <p>
+    <b>Report #${report.id}</b><br>
+    <span class="severity ${severityClass}">
+      ${report.severity}
+    </span>
+  </p>
+
+  <p>
+    <b>Location:</b>
+    <a href="https://www.google.com/maps?q=${report.latitude},${report.longitude}" target="_blank">
+      View on Map
+    </a><br>
+    <small>${report.latitude.toFixed(4)}, ${report.longitude.toFixed(4)}</small>
+  </p>
+
+  <button class="approve" onclick="review(${report.id}, 'approved')">Approve</button>
+  <button class="deny" onclick="review(${report.id}, 'denied')">Deny</button>
+`;
+
+            container.appendChild(div);
+          });
+        });
+    }
+
+    function review(id, status) {
+      fetch(`http://localhost:3000/api/reports/${id}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      })
+      .then(() => loadReports());
+    }
+
+    loadReports();
+  </script>
+</body>
+</html>

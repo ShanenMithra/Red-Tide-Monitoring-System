@@ -1,0 +1,36 @@
+# Node
+node_modules/
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*
+
+# Local database
+*.db
+*.sqlite
+*.sqlite3
+
+# Old ML model versions - not needed for deployment
+Project-Folder/algae_classifier_model.h5
+Project-Folder/algae_classifier_model_v2.h5
+Project-Folder/algae_classifier_model_v3.h5
+Project-Folder/algae_classifier_model_v4.h5
+Project-Folder/algae_classifier_model_v5.h5
+Project-Folder/best_model.h5
+
+# Training dataset - not required for inference
+Project-Folder/Dataset/

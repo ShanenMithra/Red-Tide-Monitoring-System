@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            color: white;
+            background-color: #333;
+        }
+        #bloomResult {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Predict Algal Bloom Likelihood</h1>
+    
+    <form id="bloomForm">
+        <label for="temperature">Temperature (°C):</label>
+        <input type="number" id="temperature" name="temperature" required><br>
+
+        <label for="pH">pH Level:</label>
+        <input type="number" step="0.1" id="pH" name="pH" required min="0" max="14"><br>
+
+
+        <label for="salinity">Salinity (PSU):</label>
+        <input type="number" id="salinity" name="salinity" required><br>
+
+        <label>Elements Present:</label><br>
+        <input type="checkbox" name="elements" value="N"> Nitrogen (N)<br>
+        <input type="checkbox" name="elements" value="P"> Phosphorus (P)<br>
+        <input type="checkbox" name="elements" value="Fe"> Iron (Fe)<br>
+        <input type="checkbox" name="elements" value="Si"> Silicon (Si)<br>
+
+        <button type="submit">Predict</button>
+    </form>
+
+<h2 id="bloomResult"></h2>
+
+<div id="algaeSection" style="display: none;">
+    <h3>Select an Algae Type:</h3>
+    <button class="algae-btn" data-algae="Karenia_brevis">Karenia brevis</button>
+    <button class="algae-btn" data-algae="Alexandrium_spp.">Alexandrium spp.</button>
+    <button class="algae-btn" data-algae="Gymnodinium_catenatum">Gymnodinium catenatum</button>
+    <button class="algae-btn" data-algae="Trichodesmium_erythraeum">Trichodesmium erythraeum</button>
+    <button class="algae-btn" data-algae="Heterosigma_akashiwo">Heterosigma akashiwo</button>
+    <button class="algae-btn" data-algae="Gonyaulax_spp.">Gonyaulax spp.</button>
+</div>
+
+<div id="algaeInfo" style="margin-top: 20px; font-size: 18px;"></div>
+
+
+    
+</div>
+
+
+    <script>
+       document.getElementById("bloomForm").addEventListener("submit", function (e) {
+    e.preventDefault(); // Prevent form from reloading the page
+
+    const temp = parseFloat(document.getElementById("temperature").value);
+    const ph = parseFloat(document.getElementById("pH").value);
+    const salinity = parseFloat(document.getElementById("salinity").value);
+
+// ✅ Get all checked elements
+    const selectedElements = Array.from(document.querySelectorAll('input[name="elements"]:checked'))
+    .map(el => el.value);
+
+// Send data to backend
+    fetch("/predict_bloom", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        temperature: temp,
+        pH: ph,
+        salinity: salinity,
+        elements: selectedElements  // ✅ send this too
+    })
+})
+
+    .then(res => {
+        if (!res.ok) {
+            throw new Error("Request failed");
+        }
+        return res.json();
+    })
+    .then(data => {
+        document.getElementById("bloomResult").innerText = `Bloom Level:  ${data.bloom_likelihood}`;
+        document.getElementById("algaeSection").style.display = "block"; // Show algae buttons
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("bloomResult").innerText = "Request failed";
+    });
+});
+
+const algaeDescriptions = {
+    "Karenia_brevis": `<h3> Karenia brevis </h3>
+    <p><strong>(Red Tide in Florida, Gulf of Mexico)</strong></p>
+    <p><strong>Control Measures:</strong></p>
+    <ul>
+        <li><strong>Monitoring & Early Detection:</strong> Satellite imaging, water sampling, and toxin detection.</li>
+        <li><strong>Clay Flocculation:</strong> Spraying fine clay into the water to bind and sink algae.</li>
+        <li><strong>Ozone Treatment:</strong> Using ozone in enclosed water bodies to break down brevetoxins.</li>
+        <li><strong>Reducing Nutrient Runoff:</strong> Limiting agricultural fertilizer runoff and wastewater discharge to prevent bloom triggers.</li>
+    </ul>`,
+
+    "Alexandrium_spp.": `<h3> Alexandrium spp. </h3>
+    <p><strong>(Paralytic Shellfish Poisoning)</strong></p>
+    <p><strong>Control Measures:</strong></p>
+    <ul>
+        <li><strong>Shellfish Monitoring:</strong> Frequent testing of shellfish farms to prevent human poisoning.</li>
+        <li><strong>Hydrogen Peroxide Treatment:</strong> Low-dose hydrogen peroxide has been tested for controlling blooms.</li>
+        <li><strong>Algal Grazers:</strong> Introducing filter feeders like clams and oysters in controlled aquaculture.</li>
+    </ul>`,
+
+    "Gymnodinium_catenatum": `<h3> Gymnodinium catenatum</h3>
+    <p><strong>(Paralytic Shellfish Poisoning)</strong></p>
+    <p><strong>Control Measures:</strong></p>
+    <ul>
+        <li><strong>Regulating Ballast Water:</strong> Preventing transport of cysts between regions through ship ballast water.</li>
+        <li><strong>Biocontrol Using Bacteria:</strong> Some bacterial strains naturally inhibit Gymnodinium growth.</li>
+        <li><strong>Nutrient Reduction:</strong> Controlling nitrogen and phosphorus input from farms and sewage.</li>
+    </ul>`,
+
+    "Trichodesmium_erythraeum": `<h3> Trichodesmium erythraeum </h3>
+    <p><strong>(Nitrogen-Fixing Cyanobacteria)</strong></p>
+    <p><strong>Control Measures:</strong></p>
+    <ul>
+        <li><strong>Reducing Iron & Phosphate Inputs:</strong> Trichodesmium blooms thrive on iron-rich ocean dust and excess phosphorus, so limiting these sources can help.</li>
+        <li><strong>Artificial Mixing:</strong> Using aeration or artificial upwelling to disturb stratified (layered) water where blooms form.</li>
+        <li><strong>Limiting Warm Water Conditions:</strong> Blooms are linked to warming oceans, so reducing local heat pollution (e.g., power plant discharge) can help.</li>
+    </ul>`,
+
+    "Heterosigma_akashiwo": `<h3> Heterosigma akashiwo </h3>
+    <p><strong>(Toxic Fish-Killing Algae)</strong></p>
+    <p><strong>Control Measures:</strong></p>
+    <ul>
+        <li><strong>UV Treatment:</strong> UV light has been tested to break down algal cells.</li>
+        <li><strong>Probiotic Bacteria:</strong> Some marine bacteria can suppress Heterosigma growth.</li>
+        <li><strong>Aeration & Water Circulation:</strong> Breaking up stagnant water where blooms accumulate.</li>
+    </ul>`,
+
+    "Gonyaulax_spp.": `<h3> Gonyaulax spp.</h3>
+    <p><strong>(Toxic Red Tides)</strong></p>
+    <p><strong>Control Measures:</strong></p>
+    <ul>
+        <li><strong>Chemical Treatments (Only in Emergencies):</strong> Copper sulfate has been used in extreme cases, but it harms marine life.</li>
+        <li><strong>Shellfish Ban Enforcement:</strong> Preventing human poisoning by tracking toxic blooms.</li>
+        <li><strong>Algal Grazers:</strong> Encouraging filter feeders like copepods and shellfish to reduce cell density.</li>
+    </ul>`
+};
+
+
+document.querySelectorAll(".algae-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        const selected = button.getAttribute("data-algae");
+        document.getElementById("algaeInfo").innerHTML = algaeDescriptions[selected];
+    });
+});
+
+    </script>
+    <button id="backButton" onclick="window.location.href='/'">
+    Back to Classifier
+</button>
+
+</body>
+</html>

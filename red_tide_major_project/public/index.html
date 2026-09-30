@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Red Tide Monitoring System</title>
+
+  <script async
+  src="https://maps.googleapis.com/maps/api/js?key=KEYYY&libraries=places,drawing&callback=initMap">
+</script>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h2>Red Tide Monitoring System</h2>
+<button id="run-gcn">Run Bloom Risk Prediction</button>
+<input id="search-input" type="text" placeholder="Search location..." />
+
+
+<br><br>
+
+<label>Bloom Level:</label>
+<select id="level">
+  <option>Low</option>
+  <option>Medium</option>
+  <option>High</option>
+  <option>Very High</option>
+</select>
+
+<br>
+
+<button onclick="undoLast()">Undo Last</button>
+<button onclick="clearAll()">Clear All</button>
+<button onclick="window.location.href='http://127.0.0.1:5000'">
+    Go To Algae Classifier
+</button>
+
+
+<div id="map"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
