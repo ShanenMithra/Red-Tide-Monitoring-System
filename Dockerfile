@@ -23,4 +23,4 @@ RUN pip3 install --break-system-packages -r Project-Folder/requirements.txt
 COPY . .
 
 # Start Flask internally, then Node as the public server
-CMD ["sh", "-c", "PORT=5000 python3 Project-Folder/app.py & cd red_tide_major_project && npm start"]
+CMD ["sh", "-c", "PORT=5000 python3 -u Project-Folder/app.py & cd red_tide_major_project && npm start"]
